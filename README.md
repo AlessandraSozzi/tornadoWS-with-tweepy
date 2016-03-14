@@ -17,6 +17,8 @@ If the browser gives error modify index.html line 33:
   
 *  in the browser change localhost with your internal address IP (yourIP:3000)
 
+In the browser you will see the filtered tweets (tweets with #dataviz hashtag) coming from the server. New tweets are appended at the bottom of the list.
+
 
 
 
