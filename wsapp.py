@@ -9,11 +9,14 @@ from tweepy import OAuthHandler
 import threading
 
 # Authentication params
-APP_NAME = 'Lab1_RHUL'
-CONSUMER_KEY = 'qxp5ZKUmlip9cOtWW9NMaY1O7'
-CONSUMER_SECRET = 'gnEjZRy3RarVNs7f5pQBmOULmiOvt5KXCGs0UVctaVSZT6N2Oo'
-ACCESS_TOKEN = '539576899-JNqTET2DdLX1mKCZmqpPJMmf51t7WfCF5Yq7bKAC'
-ACCESS_TOKEN_SECRET = 'CgPLe3CBz7FkPw6YQ7yZFVoyT4q4rJjMJ2CIeTm1RoDTr'
+# Refer to https://dev.twitter.com/oauth/overview/application-owner-access-tokens
+APP_NAME = ''
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
+ACCESS_TOKEN = ''
+ACCESS_TOKEN_SECRET = ''
+
+
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -26,24 +29,13 @@ class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         print 'Connection established.'
         self.connections.append(self)
-        #ioloop to wait for 3 seconds before starting to send data
-        #tornado.ioloop.IOLoop.instance().add_timeout(timedelta(seconds=10), self.send_data)
+
         
     
-    # Our function to send new (random) data for charts
+    # When message arrives write it to websocket
     def on_message(self, message):
         print 'Tweet received: \"%s\"' % message
         self.write_message(message)
-        
-        #point_data = 1
-        
-        #print point_data
-        
-        #write the json object to the socket
-        #self.write_message(json.dumps(status))
-        
-        #create new ioloop instance to intermittently publish data
-        #tornado.ioloop.IOLoop.instance().add_timeout(timedelta(seconds=10), self.send_data)
         
            
     def on_close(self):
@@ -51,13 +43,10 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         self.connections.remove(self)
 
 
-# new stream listener 
-class StdOutListener(tweepy.StreamListener, WSHandler):
-    """ A listener handles tweets are the received from the stream. 
 
-    """
+class MyStreamListener(tweepy.StreamListener, WSHandler):
 
-    # tweet handling
+    # tweet handling - Extract text and and write message
     def on_status(self, status):
         for connection in WSHandler.connections:
             connection.write_message(status.text)
@@ -79,7 +68,8 @@ def OpenStream():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
-    stream = tweepy.Stream(auth, StdOutListener()) 
+    stream = tweepy.Stream(auth, MyStreamListener()) 
+    # Accept tweets that use #dataviz hashtag
     stream.filter(track=['#dataviz'])  
 
 if __name__ == "__main__":
