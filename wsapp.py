@@ -77,7 +77,7 @@ if __name__ == "__main__":
     threading.Thread(target=OpenStream).start()
     application = tornado.web.Application([
         (r'/ws', WSHandler),
-        (r'/(favicon.ico)', tornado.web.StaticFileHandler, {'path': 'C:\Users\ONS-Alessandra\Downloads\testws\favicon.ico'})
+        (r'/(favicon.ico)', tornado.web.StaticFileHandler, {'path': 'favicon.ico'}) # path to your icon
     ])
     application.listen(8888)
     tornado.ioloop.IOLoop.instance().start()
